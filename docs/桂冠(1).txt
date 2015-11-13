@@ -1,0 +1,22 @@
+sFTP
+
+主機:events.laurel.com.tw
+帳號: mecuser
+密碼: 18design.com
+目錄:/var/www/html/events.laurel.com.tw/2015Q4hotpot
+
+
+請使用sFTP/SCP登入，在登入前請先使用ssh帳號登入
+
+SSH:
+主機:events.laurel.com.tw
+帳號: mecuser
+密碼: 18design.com
+
+
+mySQL也是請用ssh連線方式進去
+
+
+DB_NAME:hotpot2015Q4_151120
+USER_NAME:18design.com
+PASSWORD: abc123

@@ -1,0 +1,27 @@
+{
+  "name": "vision",
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass": "~3.3.5",
+    "modernizr": "~2.8.1",
+    "gsap": "~1.18.0",
+    "jquery-colorbox": "colorbox#~1.6.3",
+    "lodash": "~3.10.1",
+    "font-awesome": "~4.4.0",
+    "blueimp-gallery": "~2.16.0",
+    "superfish": "~1.7.6"
+  },
+  "overrides": {
+    "bootstrap-sass": {
+      "main": [
+        "assets/stylesheets/_bootstrap.scss",
+        "assets/fonts/bootstrap/*",
+        "assets/javascripts/bootstrap.js"
+      ]
+    }
+  },
+  "devDependencies": {
+    "chai": "~3.3.0",
+    "mocha": "~2.3.3"
+  }
+}
