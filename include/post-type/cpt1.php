@@ -119,5 +119,65 @@ function create_post_type_work()
 add_action('init', 'create_post_type_work');
 
 
+function create_post_type_share()
+{
+    $labels = array(
+        'name'              => _x( '分類', 'taxonomy general name' ),
+        'singular_name'     => _x( '分類', 'taxonomy singular name' ),
+        'search_items'      => __( '搜尋分類' ),
+        'all_items'         => __( '所有' ),
+        'parent_item'       => __( '選擇上層分類' ),
+        'parent_item_colon' => __( '選擇上層分類:' ),
+        'edit_item'         => __( '編輯上層分類' ), 
+        'update_item'       => __( '更新上層分類' ),
+        'add_new_item'      => __( '新增分類' ),
+        'new_item_name'     => __( '新分類' ),
+        'menu_name'         => __( '分類' ),
+    );
+    $args = array(
+        'labels' => $labels,
+        'hierarchical' => true,  
+        'label' => 'Themes store',  //Display name
+        'query_var' => true,
+        'rewrite' => array( 
+            'with_front' =>false, 
+            'hierarchical' => true 
+        )
+    );
+    register_taxonomy( 'share', 'shares', $args );// Register Taxonomies for Category
+    register_taxonomy_for_object_type('category', 'share');
+    register_post_type('shares', // Register Custom Post Type
+        array(
+        'labels' => array(
+            'name' => __('分享投票', 'shares'), // Rename these to suit
+            'singular_name' => __('shares', 'shares'),
+            'add_new' => __('新增', 'shares'),
+            'add_new_item' => __('新增', 'shares'),
+            'edit' => __('編輯', 'shares'),
+            'edit_item' => __('編輯', 'shares'),
+            'new_item' => __('新項目', 'shares'),
+            'view' => __('檢視', 'shares'),
+            'view_item' => __('編輯', 'shares'),
+            'search_items' => __('搜尋', 'shares'),
+            'not_found' => __('無結果', 'shares'),
+            'not_found_in_trash' => __('無結果', 'shares')
+        ),
+        'public' => true,
+        'hierarchical' => true, // Allows your posts to behave like Hierarchy Pages
+        'has_archive' => true,
+        'supports' => array(
+            'title',
+            'thumbnail'
+        ), // Go to Dashboard Custom HTML5 Blank post for supports
+        'can_export' => true, // Allows export in Tools > Export
+        'taxonomies' => array(
+            // 'post_tag',
+            'share'
+        ) // Add Category and Post Tags support
+    ));
+}
+add_action('init', 'create_post_type_share');
+
+
 
 ?>

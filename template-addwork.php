@@ -14,6 +14,9 @@
     use PHPImageWorkshop\ImageWorkshop;
 
     $wp_error;
+
+
+
     $cfs = CFS();
 
     // Check that the nonce is valid, and the user can edit this post.
@@ -24,14 +27,14 @@
       isset( $_POST['aid'] ) &&
       isset( $_POST['ticket'] ) 
     ) {
-      // The nonce was valid and the user has the capabilities, it is safe to continue.
+    //   // The nonce was valid and the user has the capabilities, it is safe to continue.
 
-      // These files need to be included as dependencies when on the front end.
+    //   // These files need to be included as dependencies when on the front end.
 
       
 
-      // Let WordPress handle the upload.
-      // Remember, 'my_image_upload' is the name of our file input in our form above.
+    //   // Let WordPress handle the upload.
+    //   // Remember, 'my_image_upload' is the name of our file input in our form above.
 
 
       $fbid = $_POST['FBID'];
@@ -56,8 +59,6 @@
       if ( ! is_wp_error( $img ) ) {
 
         $path = get_attached_file($attachment_id);
-        $ext = pathinfo(basename($path))['extension'];
-        $path = str_replace('.'.$ext, '-462x462.'.$ext, $path);
     
         $pngs = ABSPATH.str_replace(home_url().'/', '', 
           get_template_directory_uri()."/img/smoke/SmokeLoop*.png");
@@ -67,7 +68,7 @@
 
 
         $work_id = wp_insert_post(array(
-          'post_title'=>$name . '的 火鍋圖', 
+          'post_title'=>$name . ' 的火鍋圖', 
           'post_type'=>'works', 
           'post_status'=>'publish',
           'post_content'=>'')
@@ -132,7 +133,7 @@
       // The security check failed, maybe show the user an error.
     }
 
-    $obj = array('status' => $status, 'imgUrl' => $imgUrl, 'msg' => $wp_error);
+    $obj = array('status' => $status, 'imgUrl' => $imgUrl, 'msg' => $wp_error, 'workId' => $work_id);
 
     header('Content-Type: application/json');
     echo json_encode($obj);
@@ -158,7 +159,7 @@ function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'g
         $layer2->resizeInPixel($positions->pot->w, $positions->pot->h, true);
 
         // // We add the group at the left top of our card
-        $document->addLayer(1, $layer1, 0,0,'LT');
+        $document->addLayer(1, $layer1, $bg->x,$bg->y,'LT');
         // // We add the group at the left top of our card
         $document->addLayer(2, $layer2,$positions->pot->x,$positions->pot->y,'LT');
          

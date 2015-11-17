@@ -53,13 +53,40 @@
         $fbid = $_POST['FBID'];
 
         $attachment_id = media_handle_upload('imgFile', $picture_id);
+
+        // Get Attachment size 
+        $attachment = wp_get_attachment_image_src( $attachment_id, $size, $icon );
+
         // // Get the path to the upload directory.
         $wp_upload_dir = wp_upload_dir();
+        $crop_w = 462;
+        $crop_h = 462;
+
+        if($attachment[1] > $attachment[2]){
+          $crop_w = 462 / $attachment[2] *  $attachment[1];
+        }else{
+          $crop_h = 462 / $attachment[1] *  $attachment[2];
+        }
         
-        $cropped_image = image_resize(get_attached_file($attachment_id), 462, 462, true);
+        $cropped_image = image_resize(get_attached_file($attachment_id), $crop_w, $crop_h, true);
         // echo pathinfo(basename($cropped_image))['extension'];
+
+        // Check the type of file. We'll use this as the 'post_mime_type'.
+        $filetype = wp_check_filetype( basename( $cropped_image ), null );
+
+        $cropped = array(
+          'guid'           => $wp_upload_dir['url'] . '/' . basename( $cropped_image ), 
+          'post_mime_type' => $filetype['type'],
+          'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $cropped_image ) ),
+          'post_content'   => '',
+          'post_status'    => 'inherit'
+        );
+
+        $resized_attachment_id = wp_insert_attachment( $cropped, $cropped_image, $picture_id );
+
+
         $result = $cfs->save(
-          array('fbid' => $fbid,'image' => $attachment_id),
+          array('fbid' => $fbid,'image' => $attachment_id, 'resized' => $resized_attachment),
           array( 'ID' => $picture_id )
         );
         // $imgUrl = wp_get_attachment_url( $attachment_id );
@@ -91,9 +118,11 @@
       // The security check failed, maybe show the user an error.
     }
 
-    $obj = array('status' => $status, 'imgUrl' => $imgUrl, 'msg' => $wp_error, 'aid' => $attachment_id);
+    $obj = array('status' => $status, 'imgUrl' => $imgUrl, 'msg' => $wp_error, 'aid' => $resized_attachment_id);
 
     header('Content-Type: application/json');
     echo json_encode($obj);
+
+    // print_r( array('fbid' => $fbid,'image' => $attachment_id, 'resized' => $resized_attachment_id) );
 
 ?>
