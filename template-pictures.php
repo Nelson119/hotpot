@@ -9,7 +9,7 @@
       'post_type' => 'works',
       'orderby' => 'date',
       'order'   => 'DESC',
-      'posts_per_page' => 10,
+      'posts_per_page' => 8,
       'paged' => $_GET['page']
     );
     $wp_query = new WP_Query( $args ); 

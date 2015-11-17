@@ -21,13 +21,7 @@
       isset( $_POST['FBID'] ) &&
       isset( $_POST['username'] ) &&
       isset( $_POST['email'] ) &&
-      isset( $_POST['imgUrl'] ) &&
-      isset( $_POST['bg_x'] ) &&
-      isset( $_POST['bg_y'] ) &&
-      isset( $_POST['obj_x'] ) &&
-      isset( $_POST['obj_y'] ) &&
-      isset( $_POST['obj_w'] ) &&
-      isset( $_POST['obj_h'] ) &&
+      isset( $_POST['aid'] ) &&
       isset( $_POST['ticket'] ) 
     ) {
       // The nonce was valid and the user has the capabilities, it is safe to continue.
@@ -43,7 +37,7 @@
       $fbid = $_POST['FBID'];
       $email = $_POST['email'] ;
       $name = $_POST['username'] ;
-      $imgUrl = $_POST['imgUrl'];
+      $attachment_id = $_POST['aid'];
       $positions = array(
         pot => array(
           x => $_POST['obj_x'],
@@ -61,7 +55,9 @@
 
       if ( ! is_wp_error( $img ) ) {
 
-        $path = ABSPATH.str_replace(home_url(), '', $imgUrl);
+        $path = get_attached_file($attachment_id);
+        $ext = pathinfo(basename($path))['extension'];
+        $path = str_replace('.'.$ext, '-462x462.'.$ext, $path);
     
         $pngs = ABSPATH.str_replace(home_url().'/', '', 
           get_template_directory_uri()."/img/smoke/SmokeLoop*.png");
@@ -149,15 +145,11 @@ function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'g
         // // We want a height of 315px for the group
         // We initialize group
       $layer1 = ImageWorkshop::initFromPath($uploaded);
-      if($layer1->getWidth() >= $layer1->getHeight()){
-        $layer1->crop($layer1,$layer1->getHeight(),$layer1->getHeight(),0,0);
-      }else{
-        $layer1->crop($layer1,$layer1->getWidth(),$layer1->getWidth(),0,0);
-      }
+      // echo $uploaded;
       foreach ($pngs as $png) {
 
         // #1: We create our document, which have the troll picture on its background
-        $document = ImageWorkshop::initVirginLayer(600, 600); 
+        $document = ImageWorkshop::initVirginLayer(462, 462); 
 
         // #2: open the image as layers
 
