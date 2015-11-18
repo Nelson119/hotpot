@@ -43,14 +43,14 @@
       $attachment_id = $_POST['aid'];
       $positions = array(
         pot => array(
-          x => $_POST['obj_x'],
-          y => $_POST['obj_y'],
-          w => $_POST['obj_w'],
-          h => $_POST['obj_h']
+          x => round($_POST['obj_x']),
+          y => round($_POST['obj_y']),
+          w => round($_POST['obj_w']),
+          h => round($_POST['obj_h'])
         ),
         bg => array(
-          x => $_POST['bg_x'],
-          y => $_POST['bg_y']
+          x => round($_POST['bg_x']),
+          y => round($_POST['bg_y'])
         )
       );
 
@@ -74,8 +74,8 @@
           'post_content'=>'')
           , $wp_error 
         );
-
-        $gif_file = png2gif( $path,glob($pngs), null, $dest);
+        
+        $gif_file = png2gif( $path,glob($pngs), null, $dest, $positions);
 
         $filename = preg_replace('/\.png|\.jpg|\.gif|\.jpeg/', '.gif', $path);
 
@@ -135,10 +135,13 @@
 
     $obj = array('status' => $status, 'imgUrl' => $imgUrl, 'msg' => $wp_error, 'workId' => $work_id);
 
+    // header('Content-Type: image/gif');
+    // echo $gif_file;
+    
     header('Content-Type: application/json');
     echo json_encode($obj);
     
-function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'gif'){
+function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'gif', $positions){
 
       $gifPath = dest; // Your animated GIF path
       $frames = array();
@@ -146,6 +149,17 @@ function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'g
         // // We want a height of 315px for the group
         // We initialize group
       $layer1 = ImageWorkshop::initFromPath($uploaded);
+      // $layer1->applyFilter(IMG_FILTER_PIXELATE, 1, $arg2, $arg3, $arg4, true);
+      $layer1->applyFilter(IMG_FILTER_BRIGHTNESS, 40, $arg2, $arg3, $arg4, true);
+      $layer1->applyFilter(IMG_FILTER_SMOOTH, 255, $arg2, $arg3, $arg4, true);
+      // $layer1->applyFilter(IMG_FILTER_SELECTIVE_BLUR, 50, $arg2, $arg3, $arg4, true);
+      // $layer1->applyFilter(IMG_FILTER_GAUSSIAN_BLUR, 50, $arg2, $arg3, $arg4, true);
+
+      $logo = ABSPATH.str_replace(home_url().'/', '', 
+          get_template_directory_uri()."/img/smoke/little_logo.png");
+      $layer3 = ImageWorkshop::initFromPath($logo);
+      // print_r($positions);
+
       // echo $uploaded;
       foreach ($pngs as $png) {
 
@@ -155,14 +169,26 @@ function png2gif($uploaded,$pngs, $background = array(255, 255, 255), $dest = 'g
         // #2: open the image as layers
 
         $layer2 = ImageWorkshop::initFromPath($png);
+        $layer2->applyFilter(IMG_FILTER_BRIGHTNESS, 10, $arg2, $arg3, $arg4, true);
+        $layer2->applyFilter(IMG_FILTER_SMOOTH, 255, $arg2, $arg3, $arg4, true);
 
-        $layer2->resizeInPixel($positions->pot->w, $positions->pot->h, true);
+        $pot = $positions['pot'];
+        $bg = $positions['bg'];
+
+        $layer2->resizeInPixel($pot['w'], $pot['h'], false);
 
         // // We add the group at the left top of our card
-        $document->addLayer(1, $layer1, $bg->x,$bg->y,'LT');
+        $document->addLayer(1, $layer1, $bg['x'],$bg['y'],'LT');
         // // We add the group at the left top of our card
-        $document->addLayer(2, $layer2,$positions->pot->x,$positions->pot->y,'LT');
-         
+        $document->addLayer(2, $layer2,$pot['x'],$pot['y'],'LT');
+        // // We add the group at the right bottom of our card
+        $document->addLayer(3, $layer3, 10, 10,'RB');
+
+        $document->applyFilter(IMG_FILTER_GAUSSIAN_BLUR, 1, $arg2, $arg3, $arg4, true);
+        // $document->applyFilter(IMG_FILTER_CONTRAST, 10, $arg2, $arg3, $arg4, true);
+        // $document->applyFilter(IMG_FILTER_PIXELATE, 2, $arg2, $arg3, $arg4, true);
+        // $document->applyFilter(IMG_FILTER_SELECTIVE_BLUR, 2, $arg2, $arg3, $arg4, true);
+
         $image = $document->getResult("ffffff");
 
         imagepng($image,str_replace('/smoke', '', $png),9);

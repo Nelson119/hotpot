@@ -217,4 +217,8 @@ add_filter('image_send_to_editor', 'remove_thumbnail_dimensions', 10); // Remove
 // Remove Filters
 remove_filter('the_excerpt', 'wpautop'); // Remove <p> tags from Excerpt altogether
 
+update_option( 'thumbnail_size_w', 234 );
+update_option( 'thumbnail_size_h', 234 );
+update_option( 'thumbnail_crop', 1 );
+
 ?>

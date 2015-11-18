@@ -8,10 +8,14 @@
     if ( 
       isset( $_POST['FBID'] ) &&
       isset( $_POST['seq'] ) &&
+      isset( $_POST['email'] ) &&
+      isset( $_POST['username'] ) &&
       isset( $_POST['ticket'] ) 
     ) {
         $fbid = $_POST['FBID'];
         $work_id = $_POST['seq'];
+        $name = $_POST['username'];
+        $email = $_POST['email'];
 
         $wp_query = new WP_Query( array(
           'post_type' => 'shares',
@@ -42,7 +46,9 @@
           $result = $cfs->save(
             array(
               'fbid' => $fbid,
-              'target_work' => $work_id
+              'target_work' => $work_id,
+              'name' => $name,
+              'email' => $email
             ),
             array( 'ID' => $share_id )
           );
